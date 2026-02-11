@@ -1,1 +1,15 @@
 
+import telebot
+
+# BotFather берган TOKENни шу ерга қўйинг
+TOKEN = "123456789:AAHbdfhdsjfhdsjfhdsjfh"
+bot = telebot.TeleBot(TOKEN)
+
+# /start командаси учун
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(message, "Салом, бот ишлаябди ✅")
+
+# Ботни доимий ишлатиш
+print("Bot ishga tushdi...")
+bot.infinity_polling()
