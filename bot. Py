@@ -1,15 +1,70 @@
-
 import telebot
+import random
+import time
 
-# BotFather берган TOKENни шу ерга қўйинг
-TOKEN = "123456789:AAHbdfhdsjfhdsjfhdsjfh"
+TOKEN="8213890473:AAFLtnE6fFHSZ-9D9MblY_L_0ZzTgOQK4z4
+
 bot = telebot.TeleBot(TOKEN)
 
-# /start командаси учун
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(message, "Салом, бот ишлаябди ✅")
 
-# Ботни доимий ишлатиш
-print("Bot ishga tushdi...")
+# -------- ANALIZ FUNKSIYASI ----------
+def analiz_qilish():
+    """
+    Бу ерга кейин Liga Pro API уланади.
+    Ҳозир demo учун random анализ.
+    """
+
+    ishonch = random.randint(50, 80)
+
+    if ishonch >= 70:
+        signal = "✅ TIKISH MUMKIN"
+    else:
+        signal = "❌ TIKMASLIK YAXSHIROQ"
+
+    text = f"""
+🏓 Liga Pro Analiz
+
+📊 Ishonch darajasi: {ishonch}%
+
+📢 Signal: {signal}
+"""
+    return text
+
+
+# -------- START ----------
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(
+        message.chat.id,
+        "🤖 Bot ishga tushdi!\n\n/analiz deb yozsang — o'yinni tekshiraman."
+    )
+
+
+# -------- MANUAL ANALIZ ----------
+@bot.message_handler(commands=['analiz'])
+def analiz(message):
+    natija = analiz_qilish()
+    bot.send_message(message.chat.id, natija)
+
+
+# -------- AVTO SIGNAL (24/7) ----------
+def auto_signal():
+    while True:
+        natija = analiz_qilish()
+
+        # BU YERGA O'Z CHAT IDingni qo'yasan
+        CHAT_ID = "CHAT_IDING"
+
+        bot.send_message(CHAT_ID, natija)
+
+        # har 30 minutda tekshiradi
+        time.sleep(1800)
+
+
+# Thread orqali fon rejimida ishlatamiz
+import threading
+threading.Thread(target=auto_signal).start()
+
+
+print("Bot ishlayapti...")
 bot.infinity_polling()
